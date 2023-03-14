@@ -18,12 +18,26 @@ static bool g_print_step = false;
 const rtlreg_t rzero = 0;
 rtlreg_t tmp_reg[4];
 
+#define RING_BUF_LEN 20
+static char ring_buf[RING_BUF_LEN][128]={'\0'};
+static size_t ring_index=0;
+
 void device_update();
 void fetch_decode(Decode *s, vaddr_t pc);
 
 static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 #ifdef CONFIG_ITRACE_COND
-  if (ITRACE_COND) log_write("%s\n", _this->logbuf);
+ // if (ITRACE_COND) log_write("%s\n", _this->logbuf);
+	if(ITRACE_COND){
+	ring_index=ring_index%RING_BUF_LEN;
+	strncpy(ring_buf[ring_index++],_this->logbuf,128);
+	if(nemu_state.state!=NEMU_RUNNING)
+	for(int i=0;i<RING_BUF_LEN;i++){
+	log_write("%s\n",ring_buf[i]);
+	if(ring_index==i+1)
+	log_write("--------------------------------\n");
+	}
+}
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }
   IFDEF(CONFIG_DIFFTEST, difftest_step(_this->pc, dnpc));
@@ -127,7 +141,8 @@ void cpu_exec(uint64_t n) {
 }
 
 void cpu_exec_step(uint64_t n){
-	switch (nemu_state.state) {
+	cpu_exec(n);
+/*	switch (nemu_state.state) {
 	case NEMU_END: case NEMU_ABORT:
  printf("Program execution has ended. To restart the program, exit NEMU and run again.\n");
 	 return;
@@ -159,5 +174,5 @@ switch (nemu_state.state) {
 				           // fall through
 	  case NEMU_QUIT: statistic();
     }
-					          
+*/					          
 }
