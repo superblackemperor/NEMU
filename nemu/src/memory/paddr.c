@@ -2,7 +2,7 @@
 #include <memory/paddr.h>
 #include <device/mmio.h>
 #include <isa.h>
-
+#include <utils.h>
 #if   defined(CONFIG_TARGET_AM)
 static uint8_t *pmem = NULL;
 #else
@@ -11,14 +11,39 @@ static uint8_t pmem[CONFIG_MSIZE] PG_ALIGN = {};
 
 uint8_t* guest_to_host(paddr_t paddr) { return pmem + paddr - CONFIG_MBASE; }
 paddr_t host_to_guest(uint8_t *haddr) { return haddr - pmem + CONFIG_MBASE; }
-
+#ifdef CONFIG_MTRACE
+static bool check_paddr(paddr_t addr,char RW){
+	if( addr<CONFIG_MBASE||addr>=(CONFIG_MBASE+CONFIG_MSIZE))
+	return false;
+	else
+	log_write("%c 0x%x : ",RW,addr);
+	return true;
+}
+#endif
 static word_t pmem_read(paddr_t addr, int len) {
-  word_t ret = host_read(guest_to_host(addr), len);
+	word_t ret=-1;
+#ifdef CONFIG_MTRACE 
+	if(check_paddr(addr,'R')){
+	ret = host_read(guest_to_host(addr), len);
+ 	log_write("%x\n",ret);
+	}else
+	log_write("READ ERRO\n");
+#else
+	ret = host_read(guest_to_host(addr), len);
+#endif
   return ret;
 }
 
 static void pmem_write(paddr_t addr, int len, word_t data) {
-  host_write(guest_to_host(addr), len, data);
+#ifdef CONFIG_MTRACE
+	if(check_paddr(addr,'W')){
+	host_write(guest_to_host(addr), len, data);
+	log_write("%x\n",data);
+	}else
+	log_write("WRITE ERRO\n");
+#else
+	host_write(guest_to_host(addr), len, data);
+#endif
 }
 
 void init_mem() {

@@ -31,12 +31,14 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 	if(ITRACE_COND){
 	ring_index=ring_index%RING_BUF_LEN;
 	strncpy(ring_buf[ring_index++],_this->logbuf,128);
-	if(nemu_state.state!=NEMU_RUNNING)
+	if(nemu_state.state!=NEMU_RUNNING){
+	log_write("instrction trace:\n");
 	for(int i=0;i<RING_BUF_LEN;i++){
 	log_write("%s\n",ring_buf[i]);
 	if(ring_index==i+1)
 	log_write("--------------------------------\n");
 	}
+    } 
 }
 #endif
   if (g_print_step) { IFDEF(CONFIG_ITRACE, puts(_this->logbuf)); }

@@ -14,6 +14,9 @@ config PC_RESET_OFFSET
   default 0x100000 if ISA_x86
   default 0
 
+config MTRACE
+  bool "memory trace"
+  
 if !TARGET_AM
 config MEM_RANDOM
   depends on MODE_SYSTEM && !DIFFTEST
