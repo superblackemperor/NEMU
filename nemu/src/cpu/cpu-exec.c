@@ -19,8 +19,11 @@ const rtlreg_t rzero = 0;
 rtlreg_t tmp_reg[4];
 
 #define RING_BUF_LEN 20
+
+#ifdef CONFIG_ITRACE_COND
 static char ring_buf[RING_BUF_LEN][128]={'\0'};
 static size_t ring_index=0;
+#endif
 
 void device_update();
 void fetch_decode(Decode *s, vaddr_t pc);

@@ -1,7 +1,6 @@
-#include <klib.h>
-#include <klib-macros.h>
-#include <stdint.h>
-
+//#include"include/klib.h"
+#include"stdint.h"
+#include"stddef.h"
 #if !defined(__ISA_NATIVE__) || defined(__NATIVE_USE_KLIB__)
 
 size_t strlen(const char *s) {
@@ -73,19 +72,16 @@ void *memset(void *s, int c, size_t n) {
 	ss[i]=tmp;
 	return s;
 }
-
+/*
 void *memmove(void *dst, const void *src, size_t n) {
   panic("Not implemented");
 }
 
 void *memcpy(void *out, const void *in, size_t n) {
-//  panic("Not implemented");
-	char *oout=(char*)out,*iin=(char*)in;
-	for(size_t i=0;i<n;i++)
-	oout[i]=iin[i];
-	return out;	
+  panic("Not implemented");
+	
 }
-
+*/
 int memcmp(const void *s1, const void *s2, size_t n) {
   //panic("Not implemented");
 	char *ss1=(char*)s1,*ss2=(char*)s2;
@@ -97,5 +93,4 @@ int memcmp(const void *s1, const void *s2, size_t n) {
 	}
 	return 0;
 }
-
 #endif

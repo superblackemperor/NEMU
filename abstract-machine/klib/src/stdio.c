@@ -7,7 +7,8 @@
 
 void int2strD(char*str,int32_t num){                                                                                                                         
         if(num==0){strcpy(str,"0");return ;}                                                                                                                            
-       // char*tmp=(char*)malloc(50);//字符stack                                                                                                                
+       	if(num==-2147483648){strcpy(str,"-2147483648");return ;}
+	// char*tmp=(char*)malloc(50);//字符stack                                                                                                                
         char tmp[50]={'\0'};                                                                                                                                     
         char cat[2]={'\0'};  
 	bool negative=false;                                                                                                                                 
@@ -16,13 +17,13 @@ void int2strD(char*str,int32_t num){
 	{num=-1*num;                                                                      
 	negative=true;	}
 	int32_t mod=num%10;                                                                                                                                  
-        cat[0]=(char)(mod+48);                                                                                                                                
-        strcat(tmp,cat);                                                                                                                                      
+	cat[0]=(char)(mod+48);                                                                                                                                
+	strcat(tmp,cat);                                                                                                                                      
         num-=mod;                                                                                                                                             
         num/=10;                                                                                                                                              
         }       
 	if(negative)
-	strcat(tmp,"-");                                                                                                                                
+	strcat(tmp,"-");     
         //双指针字符串反转                                                                                                                                    
         int len=strlen(tmp);                                                                                                                                  
         for(int i=0,j=len-1;i<j;i++,j--)                                                                                                                      
@@ -35,9 +36,9 @@ void int2strD(char*str,int32_t num){
         //free(tmp);                                                                                                                                           
 }    
 
-int printf(const char *fmt, ...) {
+/*int printf(const char *fmt, ...) {
   panic("Not implemented");
-}
+}*/
 
 int vsprintf(char *out, const char *fmt, va_list ap) {
   panic("Not implemented");

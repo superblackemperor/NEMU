@@ -1,5 +1,5 @@
 #include "trap.h"
-
+//#include<stdio.h>
 char *s[] = {
 	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
 	"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaab",
@@ -22,6 +22,6 @@ int main() {
 	check(strcmp( strcat(strcpy(str, str1), s[3]), s[4]) == 0);
 
 	check(memcmp(memset(str, '#', 5), s[5], 5) == 0);
-
+	//printf("%d\n",sizeof(s)/sizeof(*s));
 	return 0;
 }
