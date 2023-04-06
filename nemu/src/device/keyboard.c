@@ -1,7 +1,15 @@
 #include <device/map.h>
 #include <utils.h>
 
+#include <stdio.h>
+#include <termios.h>
+#include <unistd.h>
+
 #define KEYDOWN_MASK 0x8000
+
+
+static inline void banbackshow();
+static inline void setbackshow();
 
 #ifndef CONFIG_TARGET_AM
 #include <SDL2/SDL.h>
@@ -70,7 +78,12 @@ static uint32_t *i8042_data_port_base = NULL;
 static void i8042_data_io_handler(uint32_t offset, int len, bool is_write) {
   assert(!is_write);
   assert(offset == 0);
+/*	banbackshow();
+	for(int i=0;i<GETCOUNT;i++)
+*/	
   i8042_data_port_base[0] = key_dequeue();
+	
+	setbackshow();
 }
 
 void init_i8042() {
@@ -82,4 +95,20 @@ void init_i8042() {
   add_mmio_map("keyboard", CONFIG_I8042_DATA_MMIO, i8042_data_port_base, 4, i8042_data_io_handler);
 #endif
   IFNDEF(CONFIG_TARGET_AM, init_keymap());
+}
+static struct termios orig_termios, new_termios;
+inline void banbackshow(){
+    tcgetattr(STDIN_FILENO, &orig_termios); // 获取终端属性
+
+    new_termios = orig_termios;
+    new_termios.c_lflag &= ~(ICANON | ECHO); // 禁用回显和缓存
+    new_termios.c_cc[VMIN] = 1;
+    new_termios.c_cc[VTIME] = 0;
+
+    tcsetattr(STDIN_FILENO, TCSANOW, &new_termios); // 设置为新的终端属性
+
+}
+
+inline void setbackshow(){
+	tcsetattr(STDIN_FILENO, TCSANOW, &orig_termios); // 恢复终端属性
 }
