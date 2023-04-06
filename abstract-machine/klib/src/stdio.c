@@ -36,9 +36,13 @@ void int2strD(char*str,int32_t num){
         //free(tmp);                                                                                                                                           
 }    
 
-/*int printf(const char *fmt, ...) {
-  panic("Not implemented");
-}*/
+int printf(const char *fmt, ...) {
+//  panic("Not implemented");
+	PRINTF_BODY(\
+	for(char *p=tmpcat;*p!='\0';p++)\
+	putch(*p);)
+	
+}
 
 int vsprintf(char *out, const char *fmt, va_list ap) {
   panic("Not implemented");
@@ -47,33 +51,7 @@ int vsprintf(char *out, const char *fmt, va_list ap) {
 int sprintf(char *out, const char *fmt, ...) {
  // panic("Not implemented");
 	strcpy(out,"");
-	va_list ap;
-	int d;
-	char*s;
-	int count=0;
-	va_start(ap,fmt);
-	while(fmt[count]){
-		char tmpcat[20]={'\0'}; 
-		if(fmt[count]=='%'){
-		count++;
-		switch(fmt[count]){
-		case 'd':
-			d=va_arg(ap,int);
-		int2strD(tmpcat,d);		
-			break;
-		case 's':
-			s=va_arg(ap,char*);
-			strcpy(tmpcat,s);
-			break;
-		default:
-			return 0;
-		}
-	}else
-	tmpcat[0]=fmt[count];
-	strcat(out,tmpcat);
-	count++; 
-	}
-	return 1;
+	PRINTF_BODY(strcat(out,tmpcat);)
 }
 
 int snprintf(char *out, size_t n, const char *fmt, ...) {

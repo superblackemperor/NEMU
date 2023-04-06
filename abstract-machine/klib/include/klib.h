@@ -11,6 +11,37 @@ extern "C" {
 
 #define __NATIVE_USE_KLIB__
 
+
+#define  PRINTF_BODY(DEAL)  do{\
+	va_list ap;\
+	int d;\
+	char*s;\
+	int count=0;\
+	va_start(ap,fmt);\
+	while(fmt[count]){\
+		char buf[20]={'\0'}; \
+		char *tmpcat=buf;\
+		if(fmt[count]=='%'){\
+		count++;\
+		switch(fmt[count]){\
+		case 'd':\
+			d=va_arg(ap,int);\
+		int2strD(tmpcat,d);\
+			break;\
+		case 's':\
+			s=va_arg(ap,char*);\
+			tmpcat=s;\
+			break;\
+		default:\
+			return 0;\
+		}\
+	}else\
+	tmpcat[0]=fmt[count];\
+	DEAL\
+	count++; \
+	}\
+	return 1;}while(0);
+
 // string.h
 void  *memset    (void *s, int c, size_t n);
 void  *memcpy    (void *dst, const void *src, size_t n);
