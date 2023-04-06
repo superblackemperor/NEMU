@@ -6,7 +6,11 @@ def_EHelper(lw) {
   rtl_lm(s, ddest, dsrc1, id_src2->imm, 4);
 }
 def_EHelper(lbu){
-  rtl_lm(s,ddest,dsrc1,id_src2->imm,1);
+	rtl_lm(s,ddest,dsrc1,id_src2->imm,1);
+}
+
+def_EHelper(lb){
+	rtl_lms(s,ddest,dsrc1,id_src2->imm,1);
 }
 def_EHelper(lh){
 	rtl_lms(s,ddest,dsrc1,id_src2->imm,2);
@@ -49,6 +53,9 @@ def_EHelper(andi){
 }
 def_EHelper(xori){
 	rtl_xori(s,ddest,dsrc1,id_src2->imm);
+}
+def_EHelper(ori){
+	rtl_ori(s,ddest,dsrc1,id_src2->imm);
 }
 def_EHelper(slli){
 	//if((id_src2->imm&0x00000010)==0)
@@ -96,6 +103,12 @@ def_EHelper(mul){
 }
 def_EHelper(mulh){
 	rtl_muls_hi(s,ddest,dsrc1,dsrc2);
+}
+def_EHelper(mulhu){
+	rtl_mulu_hi(s,ddest,dsrc1,dsrc2);
+}
+def_EHelper(remu){
+	rtl_divu_r(s,ddest,dsrc1,dsrc2);
 }
 def_EHelper(div){
 	rtl_divs_q(s,ddest,dsrc1,dsrc2);//需要符号扩展，但是同为32，就处理不处理都一样
