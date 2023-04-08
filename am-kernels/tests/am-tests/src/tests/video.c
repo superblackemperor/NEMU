@@ -31,6 +31,7 @@ void redraw() {
     }
   }
   io_write(AM_GPU_FBDRAW, 0, 0, NULL, 0, 0, true);
+//	while(1);
 }
 
 static uint32_t p(int tsc) {
@@ -72,7 +73,7 @@ void video_test() {
   unsigned long fps_last = 0;
   int fps = 0;
 
-  while (1) {
+  while(1){
     unsigned long upt = io_read(AM_TIMER_UPTIME).us / 1000;
     if (upt - last > 1000 / FPS) {
       update();
