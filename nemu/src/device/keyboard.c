@@ -1,15 +1,15 @@
 #include <device/map.h>
 #include <utils.h>
-
+/*
 #include <stdio.h>
 #include <termios.h>
 #include <unistd.h>
-
+*/
 #define KEYDOWN_MASK 0x8000
 
 
-static inline void banbackshow();
-static inline void setbackshow();
+//static inline void banbackshow();
+//static inline void setbackshow();
 
 #ifndef CONFIG_TARGET_AM
 #include <SDL2/SDL.h>
@@ -59,7 +59,7 @@ static uint32_t key_dequeue() {
 
 void send_key(uint8_t scancode, bool is_keydown) {
   if (nemu_state.state == NEMU_RUNNING && keymap[scancode] != _KEY_NONE) {
-    uint32_t am_scancode = keymap[scancode] | (is_keydown ? KEYDOWN_MASK : 0);
+    uint32_t am_scancode = keymap[scancode] |(is_keydown ? KEYDOWN_MASK : 0);
     key_enqueue(am_scancode);
   }
 }
@@ -83,7 +83,7 @@ static void i8042_data_io_handler(uint32_t offset, int len, bool is_write) {
 */	
   i8042_data_port_base[0] = key_dequeue();
 	
-	setbackshow();
+//	setbackshow();
 }
 
 void init_i8042() {
@@ -96,7 +96,7 @@ void init_i8042() {
 #endif
   IFNDEF(CONFIG_TARGET_AM, init_keymap());
 }
-static struct termios orig_termios, new_termios;
+/*static struct termios orig_termios, new_termios;
 inline void banbackshow(){
     tcgetattr(STDIN_FILENO, &orig_termios); // 获取终端属性
 
@@ -111,4 +111,4 @@ inline void banbackshow(){
 
 inline void setbackshow(){
 	tcsetattr(STDIN_FILENO, TCSANOW, &orig_termios); // 恢复终端属性
-}
+}*/
