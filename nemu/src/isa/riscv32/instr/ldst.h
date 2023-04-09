@@ -38,6 +38,9 @@ def_EHelper(addi){
 def_EHelper(sltiu){
 	rtl_setrelopi(s,RELOP_LTU,ddest,dsrc1,id_src2->imm);//在if-else.c的测试中把他改成了有符号比较了
 }
+def_EHelper(slti){
+ 	rtl_setrelopi(s,RELOP_LT,ddest,dsrc1,id_src2->imm);
+}
 def_EHelper(srai){
 	id_src2->imm&=0x0000001f; 
 	//if((id_src2->imm&0x00000010)==0)

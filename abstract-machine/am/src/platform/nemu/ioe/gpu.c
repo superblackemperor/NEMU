@@ -6,17 +6,16 @@ static uint32_t SCREEN_W=0;
 static uint32_t SCREEN_H=0;
 
 static uint32_t *fb = (uint32_t *)(uintptr_t)FB_ADDR;
-static uint32_t *fb_end=0;
 void __am_gpu_init() {
 	SCREEN_H=inw(VGACTL_ADDR);
 	SCREEN_W=inw(VGACTL_ADDR+2);
-	printf("W:%d H:%d\n",SCREEN_W,SCREEN_H);
+/*	printf("W:%d H:%d\n",SCREEN_W,SCREEN_H);
 	fb_end=fb+(SCREEN_W*SCREEN_H);
    uint32_t st=100+50*SCREEN_W;
 for(int j=0;j<50;j++)
  for(int i=0;i<100;i++)
 fb[st+i+j*SCREEN_W] = 0xff;
-  outl(SYNC_ADDR, 1);
+  outl(SYNC_ADDR, 1);*/
 }
 
 void __am_gpu_config(AM_GPU_CONFIG_T *cfg) {
