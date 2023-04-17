@@ -4,6 +4,8 @@
 #include <isa-all-instr.h>
 #include <locale.h>
 #include "sdb.h"
+
+#include"isa.h"
 /* The assembly code of instructions executed is only output to the screen
  * when the number of instructions executed is less than this value.
  * This is useful when you use the `si' command.
@@ -11,7 +13,7 @@
  */
 #define MAX_INSTR_TO_PRINT 10
 
-CPU_state cpu = {};
+CPU_state cpu = {.mstatus=0x1800};
 uint64_t g_nr_guest_instr = 0;
 static uint64_t g_timer = 0; // unit: us
 static bool g_print_step = false;
@@ -23,6 +25,24 @@ rtlreg_t tmp_reg[4];
 #ifdef CONFIG_ITRACE_COND
 static char ring_buf[RING_BUF_LEN][128]={'\0'};
 static size_t ring_index=0;
+#endif
+
+#ifdef CONFIG_ETRACE
+#include<malloc.h>
+etrace *Ehead=NULL,*Eend=NULL;
+void pushEtraceNode(event no){
+	etrace*tmp=(etrace*)malloc(sizeof(etrace));
+	tmp->pc=cpu.pc;
+	tmp->e=no;
+	tmp->next=NULL;
+	if(Ehead==NULL&&Eend==NULL){
+	Ehead=tmp;
+	Eend=tmp;}
+	else{	
+	Eend->next=tmp;
+	Eend=tmp;
+	}
+}
 #endif
 
 void device_update();
@@ -49,6 +69,33 @@ static void trace_and_difftest(Decode *_this, vaddr_t dnpc) {
 	//扫描监视点
 #ifdef CONFIG_WATCHPOINT	
   scan_wp();
+#endif
+
+#ifdef CONFIG_ETRACE
+//异常追踪
+#define STMP(arg) case arg:strcat(tmp,#arg);break;
+if(nemu_state.state!=NEMU_RUNNING){
+	log_write("-----------------------------------\n");
+	log_write("etrace:\n");
+	etrace*next=NULL;
+	for(etrace*p=Ehead;p!=NULL;p=next){
+		log_write("0x%x:",p->pc);
+		char tmp[20]={'\0'};
+		switch(p->e){
+		STMP(EVENT_NULL);
+		STMP(EVENT_YIELD);
+		STMP(EVENT_SYSCALL);
+		STMP(EVENT_PAGEFAULT);
+		STMP(EVENT_ERROR);
+		default:assert(0);
+		};
+		log_write("%s\n",tmp);
+		next=p->next;
+		free(p);
+  }
+	Ehead=NULL;
+	Eend=NULL;	
+}
 #endif
 }
 

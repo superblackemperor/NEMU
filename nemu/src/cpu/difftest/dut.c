@@ -10,6 +10,7 @@ void (*ref_difftest_memcpy)(paddr_t addr, void *buf, size_t n, bool direction) =
 void (*ref_difftest_regcpy)(void *dut, bool direction) = NULL;
 void (*ref_difftest_exec)(uint64_t n) = NULL;
 void (*ref_difftest_raise_intr)(uint64_t NO) = NULL;
+void isa_spiker_reg_display(CPU_state*ref_r);
 
 #ifdef CONFIG_DIFFTEST
 
@@ -80,7 +81,11 @@ static void checkregs(CPU_state *ref, vaddr_t pc) {
   if (!isa_difftest_checkregs(ref, pc)) {
     nemu_state.state = NEMU_ABORT;
     nemu_state.halt_pc = pc;
-    isa_reg_display();
+	printf("It is NEMU:\n");   
+	isa_reg_display();
+	printf("-----------------------------------------------------------\n");
+	printf("It is SPIKER:\n");
+	isa_spiker_reg_display(ref);
   }
 }
 

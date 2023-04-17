@@ -4,6 +4,21 @@
 // Located at src/isa/$(GUEST_ISA)/include/isa-def.h
 #include <isa-def.h>
 #include <stdio.h>
+typedef enum{
+	EVENT_NULL = 0,
+	EVENT_YIELD, EVENT_SYSCALL, EVENT_PAGEFAULT, EVENT_ERROR,
+	EVENT_IRQ_TIMER, EVENT_IRQ_IODEV,
+}event;
+//exception trace
+#ifdef CONFIG_ETRACE
+typedef struct etrace{
+	uint32_t pc;
+	int e;
+	struct etrace*next;
+}etrace;
+extern etrace*Ehead,*Eend;
+void pushEtraceNode(event no);
+#endif
 // The macro `__GUEST_ISA__` is defined in $(CFLAGS).
 // It will be expanded as "x86" or "mips32" ...
 typedef concat(__GUEST_ISA__, _CPU_state) CPU_state;

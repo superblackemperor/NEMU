@@ -8,6 +8,6 @@
 	f(addi) f(andi) f(sltiu) f(slti) f(srai) f(srli) f(xori) f(slli) f(ori)/*I arith_imm*/ \
         f(add) f(sub) f(sltu) f(xor) f(or) f(sll) f(slt) f(and) \
 	f(mul) f(mulh) f(mulhu) f(div) f(rem) f(remu) f(sra) f(srl) f(divu)/*R arith_reg*/ \
-	f(inv) f(nemu_trap)
+	f(inv) f(nemu_trap) f(ecall) f(csrrw) f(csrrs) f(mret)
 
 def_all_EXEC_ID();
