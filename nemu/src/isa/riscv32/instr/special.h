@@ -6,6 +6,8 @@ def_EHelper(nemu_trap) {
   rtl_hostcall(s, HOSTCALL_EXIT, NULL, &gpr(10), NULL, 0); // gpr(10) is $a0
 }
 
+#define a7 cpu.gpr[17]._32
+
 #define CHECK_CSR rtlreg_t *csr=0;\
 		switch(id_src2->simm){\
 		case 0x305:\
@@ -42,8 +44,16 @@ def_EHelper(csrrs){
  rtl_or(s,csr,csr,dsrc1);
 }
 def_EHelper(ecall){
-	
-  s->dnpc=isa_raise_intr(EVENT_YIELD,cpu.pc);
+	int NO;
+	if(a7==0||a7==1)
+	NO=EVENT_SYSCALL;
+	else if(a7==-1)
+	NO=EVENT_YIELD;
+	else{
+	printf("error NO a7=%u\n",a7);
+	NO=EVENT_ERROR;
+	}
+  s->dnpc=isa_raise_intr(NO,cpu.pc);
   
 }
 
