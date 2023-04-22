@@ -45,7 +45,7 @@ def_EHelper(csrrs){
 }
 def_EHelper(ecall){
 	int NO;
-	if(a7==0||a7==1)
+	if(a7>=0&&a7<=19)
 	NO=EVENT_SYSCALL;
 	else if(a7==-1)
 	NO=EVENT_YIELD;
