@@ -24,4 +24,24 @@ enum {
   SYS_gettimeofday
 };
 
+void sys_exit(){
+ halt(0);
+}
+void sys_yield(){
+	yield();
+}
+int32_t sys_write(uint32_t fd,void*buf,size_t len){
+	switch(fd){
+	case 1:
+	case 2:
+	for(int i=0;i<len;i++)
+	putch(((char*)buf)[i]);
+	break;
+	default:return -1;
+	}
+	return len;
+}
+int32_t sys_brk(uint32_t addr){
+	return 0;
+}
 #endif

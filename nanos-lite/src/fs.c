@@ -1,4 +1,6 @@
 #include <fs.h>
+#include <common.h>
+#include <proc.h>
 
 typedef size_t (*ReadFn) (void *buf, size_t offset, size_t len);
 typedef size_t (*WriteFn) (const void *buf, size_t offset, size_t len);
@@ -9,6 +11,7 @@ typedef struct {
   size_t disk_offset;
   ReadFn read;
   WriteFn write;
+  size_t open_offset;
 } Finfo;
 
 enum {FD_STDIN, FD_STDOUT, FD_STDERR, FD_FB};
@@ -34,3 +37,54 @@ static Finfo file_table[] __attribute__((used)) = {
 void init_fs() {
   // TODO: initialize the size of /dev/fb
 }
+
+int fs_open(const char *pathname, int flags, int mode){
+	for(int i=3;i<sizeof(file_table);i++){
+	  if(strcmp(file_table[i].name,pathname)==0){
+		return i;
+	  }
+	}
+	panic("filename error");
+}
+size_t fs_read(int fd, void *buf, size_t len){
+ assert(file_table[fd].open_offset+len<file_table[fd].size); 
+ ramdisk_read(buf,file_table[fd].disk_offset+file_table[fd].open_offset,len);
+ file_table[fd].open_offset+=len;
+ return len;
+}
+size_t fs_write(int fd, const void *buf, size_t len){
+assert(file_table[fd].open_offset+len<file_table[fd].size); 
+ramdisk_write(buf,file_table[fd].disk_offset+file_table[fd].open_offset,len);
+file_table[fd].open_offset+=len;
+return len;
+}
+size_t fs_lseek(int fd, size_t offset, int whence){
+	switch(whence){
+	case SEEK_SET:
+	file_table[fd].open_offset=offset;
+	break;
+	case SEEK_CUR:
+	file_table[fd].open_offset+=offset;
+	break;
+	case SEEK_END:
+	file_table[fd].open_offset=file_table[fd].size-1+offset;
+	break;
+	default:panic("lseek whence error");
+	}
+	assert(file_table[fd].open_offset>=0&&\
+file_table[fd].open_offset<file_table[fd].size);
+	return file_table[fd].open_offset; 
+}
+
+int fs_close(int fd){
+	return 0;
+}
+
+
+
+
+
+
+
+
+

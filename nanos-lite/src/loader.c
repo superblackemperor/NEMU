@@ -1,5 +1,6 @@
 #include <proc.h>
 #include <elf.h>
+#include <fs.h>
 
 #ifdef __LP64__
 # define Elf_Ehdr Elf64_Ehdr
@@ -10,7 +11,7 @@
 #endif
 
 
-static uintptr_t loader(PCB *pcb, const char *filename) {
+/*static uintptr_t loader(PCB *pcb, const char *filename) {
   //TODO();
 //把img加载到地址为vaddr(83000000)的地方，vaddr是基本上就是am的堆区区域,用户程序使用系统的同一个栈,堆区使用klib的malloc申请
 
@@ -32,10 +33,6 @@ for(int i=0;i<segNum;i++){
   ramdisk_read(&ph,off,sizeof(Elf_Phdr));
   off+=sizeof(Elf_Phdr);
 if(ph.p_type==PT_LOAD){//判断type
-	/*if(flag==false){
-	ret_faddr=ph.p_vaddr;
-	flag=true;
-	}*/
 printf("off=%d,vaddr=%d,fileSize=%d\n",
 ph.p_offset,ph.p_vaddr,ph.p_filesz);
 //把程序加载到合适区域
@@ -47,6 +44,42 @@ for(j=0;j<ph.p_filesz;j+=4){
 	//outl(ph.p_vaddr+j,instr);
     }
 printf("ph.p_vaddr+j=%d,000=%d\n",ph.p_vaddr+j,ph.p_memsz-ph.p_filesz);
+memset((void*)(ph.p_vaddr+j),0,ph.p_memsz-ph.p_filesz);
+  }
+}
+//返回这个区域的首地址，naive_uload会使os像执行函数一样执行这个用户程序
+  	
+	return eh.e_entry;
+}*/
+
+static uintptr_t loader(PCB *pcb, const char *filename) {
+//把img加载到地址为vaddr(83000000)的地方，vaddr是基本上就是am的堆区区域,用户程序使用系统的同一个栈,堆区使用klib的malloc申请
+	//先解析elf
+	int fd=fs_open(filename,0,0);
+	size_t off=0;
+	Elf_Ehdr eh;
+	//ramdisk_read(&eh,off,sizeof(Elf_Ehdr));//读取elf头
+	fs_read(fd,&eh,sizeof(Elf_Ehdr));
+	assert(*(uint32_t *)eh.e_ident == 0x464C457f);
+	assert(eh.e_machine==EXPECT_TYPE);
+	//读取程序头表
+	off+=eh.e_phoff;
+	int segNum=eh.e_phnum;//程序表中的表项数目
+	Elf_Phdr ph;
+for(int i=0;i<segNum;i++){
+  //ramdisk_read(&ph,off,sizeof(Elf_Phdr));
+  fs_lseek(fd,off,SEEK_SET);
+  fs_read(fd,&ph,sizeof(Elf_Phdr));
+  off+=sizeof(Elf_Phdr);
+if(ph.p_type==PT_LOAD){//判断type
+//把程序加载到合适区域
+fs_lseek(fd,ph.p_offset,SEEK_SET);
+uint32_t j;
+for(j=0;j<ph.p_filesz;j+=4){
+    uint32_t instr;
+        fs_read(fd,&instr,sizeof(instr));
+	*(volatile uint32_t*)(ph.p_vaddr+j)=instr;
+    }
 memset((void*)(ph.p_vaddr+j),0,ph.p_memsz-ph.p_filesz);
   }
 }
