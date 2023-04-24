@@ -34,10 +34,11 @@ void __am_gpu_fbdraw(AM_GPU_FBDRAW_T *ctl) {
 //uint32_t blocksize=ctl->w*ctl->h;
 /*memcpy(fb,ctl->pixels,blocksize);
 fb+=blocksize;*/
+uint32_t* pp=(uint32_t*)ctl->pixels;
 uint32_t start=ctl->x+ctl->y*SCREEN_W;
 for(int j=0;j<ctl->h;j++)
 	for(int i=0;i<ctl->w;i++)
-fb[start+i+j*SCREEN_W]=*((uint32_t*)ctl->pixels+i+j*ctl->w);
+fb[start+i+j*SCREEN_W]=*(pp++);//+i+j*ctl->w);
 
 /*for(int i=0;i<blocksize;i++)
 	fb[start+i]=*((uint32_t*)ctl->pixels+i);	

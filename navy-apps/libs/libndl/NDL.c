@@ -4,12 +4,13 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include <assert.h>
 static int evtdev = -1;
 static int fbdev = -1;
 static int screen_w = 0, screen_h = 0;
 static int evfd;
 static struct timeval timer={};
-
+static int draw_w=0,draw_h=0;
 uint32_t NDL_GetTicks() {
   if(gettimeofday(&timer,NULL)<0){
 	printf("error gettime\n");
@@ -52,8 +53,9 @@ static void strD2int(int*v,char*str){
 	*v+=(str[i]-48)*pow(10,len-1-i);
 	}
 }
+int base=0;
 void NDL_OpenCanvas(int *w, int *h) {
-  if (getenv("NWM_APP")) {
+  /*if (getenv("NWM_APP")) {
     int fbctl = 4;
     fbdev = 5;
     screen_w = *w; screen_h = *h;
@@ -69,15 +71,27 @@ void NDL_OpenCanvas(int *w, int *h) {
       if (strcmp(buf, "mmap ok") == 0) break;
     }
     close(fbctl);
-  }
+  }*/
 	if(*w>screen_w||*h>screen_h){
 	printf("over screen size\n");
 	assert(0);
 	}
-	screen_w = *w; screen_h = *h;
+	draw_w = *w; draw_h = *h;
+	int x=(screen_w-draw_w)/2;
+	int y=(screen_h-draw_h)/2;
+	base=(x+y*screen_w)*4;
 }
 
 void NDL_DrawRect(uint32_t *pixels, int x, int y, int w, int h) {
+	lseek(fbdev,base+(x+y*screen_w)*4,SEEK_SET);
+	int i=0;
+	do{
+	write(fbdev,pixels,w*4);//break;
+	i++;
+	if(i>=h)break;
+	pixels+=w;
+	lseek(fbdev,(screen_w-w)*4,SEEK_CUR);
+	}while(1);
 }
 
 void NDL_OpenAudio(int freq, int channels, int samples) {
@@ -119,11 +133,12 @@ int NDL_Init(uint32_t flags) {
 	strD2int(&screen_h,value);
 close(fd);
 //-------------------------
-
+fbdev=open("/dev/fb",0,0);
 
 return 0;
 }
 
 void NDL_Quit() {
 	close(evfd);
+	close(fbdev);
 }

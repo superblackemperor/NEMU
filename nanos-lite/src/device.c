@@ -9,6 +9,7 @@
 #define NAME(key) \
   [AM_KEY_##key] = #key,
 
+AM_GPU_CONFIG_T gpu={};
 static char dpinfo[50]={'\0'};
 static const char *keyname[256] __attribute__((used)) = {
   [AM_KEY_NONE] = "NONE",
@@ -35,14 +36,12 @@ size_t dispinfo_read(void *buf, size_t offset, size_t len) {
 }
 
 size_t fb_write(const void *buf, size_t offset, size_t len) {
-/*	int x,y,w,h;
-	x=offset%gpu.width;
-	y=offset/gpu.width;
-
-	io_write(AM_GPU_FBDRAW,x,y,buf,w,h,true);
-*/ return 0;
+	int x,y;
+	x=(offset%(4*gpu.width))/4;
+	y=offset/(4*gpu.width);
+	io_write(AM_GPU_FBDRAW,x,y,(void*)buf,len/4,1,true);
+ return len;
 }
-AM_GPU_CONFIG_T gpu={};
 
 void init_device() {
   Log("Initializing devices...");
