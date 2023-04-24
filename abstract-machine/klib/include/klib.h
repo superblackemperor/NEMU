@@ -68,7 +68,7 @@ int    sprintf   (char *str, const char *format, ...);
 int    snprintf  (char *str, size_t size, const char *format, ...);
 int    vsprintf  (char *str, const char *format, va_list ap);
 int    vsnprintf (char *str, size_t size, const char *format, va_list ap);
-
+void int2strD(char*str,int32_t num);
 // assert.h
 #ifdef NDEBUG
   #define assert(ignore) ((void)0)

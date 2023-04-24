@@ -84,7 +84,7 @@ memset((void*)(ph.p_vaddr+j),0,ph.p_memsz-ph.p_filesz);
   }
 }
 //返回这个区域的首地址，naive_uload会使os像执行函数一样执行这个用户程序
-  	
+fs_close(fd);  	
 	return eh.e_entry;
 }
 
