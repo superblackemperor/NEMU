@@ -102,6 +102,7 @@ FT.open_offset<FT.size)){
 }
 
 int fs_close(int fd){
+	FT.open_offset=0;
 	return 0;
 }
 

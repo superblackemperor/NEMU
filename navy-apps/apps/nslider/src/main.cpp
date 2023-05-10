@@ -12,7 +12,7 @@
 //   gg - first page
 
 // number of slides
-const int N = 10;
+const int N = 3;
 // slides path pattern (starts from 0)
 const char *path = "/share/slides/slides-%d.bmp";
 
@@ -25,15 +25,18 @@ void render() {
   }
   char fname[256];
   sprintf(fname, path, cur);
-  slide = SDL_LoadBMP(fname);
-  assert(slide);
-  SDL_UpdateRect(slide, 0, 0, 0, 0);
+ printf("fname:%s\n",fname);
+ slide = SDL_LoadBMP(fname);
+ printf("uup\n");
+ assert(slide);
+   SDL_UpdateRect(slide, 0, 0, 0, 0);
 }
 
 void prev(int rep) {
   if (rep == 0) rep = 1;
   cur -= rep;
   if (cur < 0) cur = 0;
+ printf("cur:%d\n",cur);
   render();
 }
 
@@ -41,6 +44,7 @@ void next(int rep) {
   if (rep == 0) rep = 1;
   cur += rep;
   if (cur >= N) cur = N - 1;
+	printf("cur:%d\n",cur);
   render();
 }
 
@@ -57,6 +61,7 @@ int main() {
     SDL_WaitEvent(&e);
 
     if (e.type == SDL_KEYDOWN) {
+	//printf("sym:%d\n",e.key.keysym.sym);
       switch(e.key.keysym.sym) {
         case SDLK_0: rep = rep * 10 + 0; break;
         case SDLK_1: rep = rep * 10 + 1; break;
@@ -69,9 +74,9 @@ int main() {
         case SDLK_8: rep = rep * 10 + 8; break;
         case SDLK_9: rep = rep * 10 + 9; break;
         case SDLK_J:
-        case SDLK_DOWN: next(rep); rep = 0; g = 0; break;
+        case SDLK_DOWN:printf("rep:%d\n",rep); next(rep); rep = 0; g = 0; break;
         case SDLK_K:
-        case SDLK_UP: prev(rep); rep = 0; g = 0; break;
+        case SDLK_UP:printf("rep:%d\n",rep); prev(rep); rep = 0; g = 0; break;
         case SDLK_G:
           g ++;
           if (g > 1) {

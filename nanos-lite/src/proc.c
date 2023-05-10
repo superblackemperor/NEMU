@@ -25,8 +25,8 @@ void init_proc() {
   switch_boot_pcb();
 
   Log("Initializing processes...");
-  Log("loader /bin/bmp-test");
-  naive_uload(NULL,"/bin/bmp-test");
+  Log("loader /bin/nterm");
+  naive_uload(NULL,"/bin/nterm");
     // load program here
 
 }

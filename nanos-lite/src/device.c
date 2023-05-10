@@ -24,9 +24,9 @@ size_t serial_write(const void *buf, size_t offset, size_t len) {
 
 size_t events_read(void *buf, size_t offset, size_t len) {
 	AM_INPUT_KEYBRD_T kev=io_read(AM_INPUT_KEYBRD);
+	strcpy(buf,keyname[kev.keycode]);
 	if(kev.keydown)
-	{strcpy(buf,keyname[kev.keycode]);
-	 return len;} 
+	 return len;
   return 0;
 }
 
@@ -57,7 +57,7 @@ char tmp[20]={'\0'};
   strcat(dpinfo,"HEIGHT : ");
   int2strD(tmp,gpu.height);
   strcat(dpinfo,tmp);
-  printf("dpinfo:%s\n",dpinfo);
+  //printf("dpinfo:%s\n",dpinfo);
 //-----------------------
   
 }
