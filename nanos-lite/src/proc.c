@@ -15,22 +15,40 @@ void switch_boot_pcb() {
 void hello_fun(void *arg) {
   int j = 1;
   while (1) {
-    Log("Hello World from Nanos-lite with arg '%p' for the %dth time!", (uintptr_t)arg, j);
-    j ++;
+    Log("Hello World from Nanos-lite with arg '%s' for the %dth time!\n", ((char*)arg), j);
+ //   Log("hello world\n");
+	j ++;
     yield();
   }
 }
-
+void context_kload(PCB*p,void (*entry)(void *),void*arg){
+	Area kstack={p->stack,p->stack+STACK_SIZE};
+	p->cp=kcontext(kstack,entry,arg);
+	
+}
 void init_proc() {
-  switch_boot_pcb();
+	char*arg1="ARG1",*arg2="ARG2";
+  context_kload(&pcb[0], hello_fun, arg1);//构造好pcd了
+  context_kload(&pcb[1], hello_fun, arg2);
+   switch_boot_pcb();//初始化cur
+   yield();//自陷操作进入进程调度
+	
 
-  Log("Initializing processes...");
+ 
+/*Log("Initializing processes...");
   Log("loader /bin/bird");
-  naive_uload(NULL,"/bin/bird");
+  naive_uload(NULL,"/bin/bird");*/
     // load program here
 
 }
 
 Context* schedule(Context *prev) {
-  return NULL;
+  // save the context pointer
+current->cp = prev;//第一次会让pcb_boot指向内核的上下文
+
+// always select pcb[0] as the new process
+current = (current == &pcb[0] ? &pcb[1] : &pcb[0]);
+
+// then return the new context
+return current->cp;
 }

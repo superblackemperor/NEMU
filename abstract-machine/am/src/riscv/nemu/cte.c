@@ -35,8 +35,11 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
   return true;
 }
 
-Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {
-  return NULL;
+Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {//构造上下文
+  	Context init={{0},0,0x1800,(uint32_t)(entry-4)};
+	init.gpr[10]=(uintptr_t)arg;
+	memcpy(kstack.end-sizeof(Context),&init,sizeof(Context));
+	return kstack.end-sizeof(Context);
 }
 
 void yield() {
