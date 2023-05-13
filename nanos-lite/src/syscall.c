@@ -56,6 +56,7 @@ void do_syscall(Context *c) {
 	break;
     case SYS_open:
 	c->GPRx=sys_open((const char*)a[1],a[2],a[3]);
+	Log("open\n");
 	break;
     case SYS_write:
 	c->GPRx=sys_write(a[1],(void*)a[2],a[3]);

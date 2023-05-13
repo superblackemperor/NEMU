@@ -1,5 +1,4 @@
 #include "fixedptc.h"
-
 /**
  * Convert the given fixedpt number to a decimal string.
  * The max_dec argument specifies how many decimal digits to the right
@@ -9,6 +8,7 @@
  * be returned, meaning there will be invalid, bogus digits outside the
  * specified precisions.
  */
+#ifdef PPPPP
 void fixedpt_str(fixedpt A, char *str, int max_dec) {
 	int ndec = 0, slen = 0;
 	char tmp[12] = {0};
@@ -59,6 +59,7 @@ void fixedpt_str(fixedpt A, char *str, int max_dec) {
 	else
 		str[slen] = '\0';
 }
+#endif
 
 /* Returns the square root of the given number, or -1 in case of error */
 fixedpt fixedpt_sqrt(fixedpt A) {
@@ -198,3 +199,4 @@ fixedpt fixedpt_ln(fixedpt x) {
 	return (fixedpt_mul(LN2, (log2 << FIXEDPT_FBITS)) + f
 	    - fixedpt_mul(s, f - R));
 }
+

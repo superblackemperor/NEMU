@@ -25,8 +25,8 @@ void init_proc() {
   switch_boot_pcb();
 
   Log("Initializing processes...");
-  Log("loader /bin/nterm");
-  naive_uload(NULL,"/bin/nterm");
+  Log("loader /bin/bird");
+  naive_uload(NULL,"/bin/bird");
     // load program here
 
 }

@@ -184,8 +184,7 @@ static SDL_Surface* STBIMG__CreateSurfaceImpl(STBIMG__image img, int origin_has_
 
 
 SDL_STBIMG_DEF SDL_Surface* STBIMG_LoadFromMemory(const unsigned char* buffer, int length)
-{
-	STBIMG__image img = {0};
+{	STBIMG__image img = {0};
 	int bppToUse = 0;
 	int inforet = 0;
 	SDL_Surface* ret = NULL;
@@ -206,7 +205,7 @@ SDL_STBIMG_DEF SDL_Surface* STBIMG_LoadFromMemory(const unsigned char* buffer, i
 	if(!inforet)
 	{
 		SDL_SetError("STBIMG_LoadFromMemory(): Couldn't get image info: %s!\n", stbi_failure_reason());
-		return NULL;
+				return NULL;
 	}
 
 	// no alpha => use RGB, else use RGBA
@@ -229,7 +228,7 @@ SDL_STBIMG_DEF SDL_Surface* STBIMG_LoadFromMemory(const unsigned char* buffer, i
 		SDL_free(img.data);
 		return NULL;
 	}
-
+//	printf("ret\n");
 	return ret;
 }
 
