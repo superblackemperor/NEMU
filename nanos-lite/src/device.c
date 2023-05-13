@@ -17,12 +17,14 @@ static const char *keyname[256] __attribute__((used)) = {
 };
 
 size_t serial_write(const void *buf, size_t offset, size_t len) {
+ yield();//自陷操作进入进程调度 
  for(int i=0;i<len;i++)
 	putch(((char*)buf)[i]); 
  return len;
 }
 
 size_t events_read(void *buf, size_t offset, size_t len) {
+	yield();//自陷操作进入进程调度
 	AM_INPUT_KEYBRD_T kev=io_read(AM_INPUT_KEYBRD);
 	strcpy(buf,keyname[kev.keycode]);
 	if(kev.keydown)
@@ -31,11 +33,13 @@ size_t events_read(void *buf, size_t offset, size_t len) {
 }
 
 size_t dispinfo_read(void *buf, size_t offset, size_t len) {
-  	strncpy(buf,dpinfo,len);	
+  	yield();//自陷操作进入进程调度
+	strncpy(buf,dpinfo,len);	
 	return len;
 }
 
 size_t fb_write(const void *buf, size_t offset, size_t len) {
+	yield();//自陷操作进入进程调度
 	int x,y;
 	x=(offset%(4*gpu.width))/4;
 	y=offset/(4*gpu.width);

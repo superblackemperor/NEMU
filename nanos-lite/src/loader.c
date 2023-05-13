@@ -52,7 +52,7 @@ memset((void*)(ph.p_vaddr+j),0,ph.p_memsz-ph.p_filesz);
 	return eh.e_entry;
 }*/
 
-static uintptr_t loader(PCB *pcb, const char *filename) {
+uintptr_t loader(PCB *pcb, const char *filename) {
 //把img加载到地址为vaddr(83000000)的地方，vaddr是基本上就是am的堆区区域,用户程序使用系统的同一个栈,堆区使用klib的malloc申请
 	//先解析elf
 	int fd=fs_open(filename,0,0);
