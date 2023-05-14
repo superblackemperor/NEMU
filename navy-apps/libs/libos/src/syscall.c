@@ -104,8 +104,7 @@ return _syscall_(SYS_gettimeofday,tv,tz,0);
 }
 
 int _execve(const char *fname, char * const argv[], char *const envp[]) {
-  _exit(SYS_execve);
-  return 0;
+  return _syscall_(SYS_execve,fname,argv,envp);
 }
 
 // Syscalls below are not used in Nanos-lite.

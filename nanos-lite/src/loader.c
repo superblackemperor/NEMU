@@ -56,6 +56,7 @@ uintptr_t loader(PCB *pcb, const char *filename) {
 //把img加载到地址为vaddr(83000000)的地方，vaddr是基本上就是am的堆区区域,用户程序使用系统的同一个栈,堆区使用klib的malloc申请
 	//先解析elf
 	int fd=fs_open(filename,0,0);
+	if(fd<0)return 0;
 	size_t off=0;
 	Elf_Ehdr eh;
 	//ramdisk_read(&eh,off,sizeof(Elf_Ehdr));//读取elf头

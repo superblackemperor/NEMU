@@ -1,10 +1,16 @@
 #include <stdio.h>
 #include <assert.h>
 #include <fixedptc.h>
-void test();
-int main() {
- 	fixedpt_sqrt(FIXEDPT_PI);
-	//test();
+
+int main(int argc,char*argv[],char*envp[]) {
+	printf("argc=%d\nargv:\n",argc);
+	for(int i=0;i<argc;i++){
+	printf("%s\n",argv[i]);
+	}
+	printf("envp:\n");
+	for(int i=0;envp[i]!=NULL;i++){
+	printf("%s\n",envp[i]);
+	}
 	printf("PASS!!!\n");
 
   return 0;

@@ -23,7 +23,37 @@ static void sh_prompt() {
 }
 
 static void sh_handle_cmd(const char *cmd) {
-}
+	printf("%s\n",cmd);
+	int argc=0;
+	char argv[5][30]={0};//max 5 argv
+	int i=0,j=0;
+	const char*p=cmd;
+	while(*p!='\n'&&j<5){
+		if(*p!=' '){
+		argv[j][i]=*p;
+		i++;}
+		else
+		{
+		argc++;
+		argv[j][i]='\0';	
+		j++;
+		i=0;
+		}
+		p++;
+	}
+	argc++;
+	argv[j][i]='\0';	
+
+	char*argvv[20]={NULL};
+	for(int i=0;i<argc;i++){
+	argvv[i]=argv[i];
+	}
+	char*envp[]={NULL};
+	printf("argvv[0]:%s\n",argvv[0]);
+	int ret=execve(argvv[0],argvv,envp);
+	printf("ret:%d\n",ret);
+	//execve("/bin/bird",argvv,envp);
+	}
 
 void builtin_sh_run() {
   sh_banner();

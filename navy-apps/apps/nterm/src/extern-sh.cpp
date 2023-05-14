@@ -1,7 +1,7 @@
 #include <nterm.h>
 #include <fcntl.h>
 #include <unistd.h>
-
+#include<stdio.h>
 static int read_fd, write_fd, nterm_to_app[2], app_to_nterm[2]; // file desc
 
 char handle_key(const char *buf);
@@ -65,7 +65,6 @@ void extern_app_run(const char *app_path) {
       if (ch == '\n') break;
     }
     *p = '\0';
-
     if (buf[0] == 'k') {
       const char *res = term->keypress(handle_key(buf + 1));
       if (res) {

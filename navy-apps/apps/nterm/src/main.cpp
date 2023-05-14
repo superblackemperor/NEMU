@@ -1,7 +1,7 @@
 #include <nterm.h>
 #include <SDL.h>
 #include <SDL_bdf.h>
-
+#include<stdio.h>
 static const char *font_fname = "/share/fonts/Courier-7.bdf";
 static BDF_Font *font = NULL;
 static SDL_Surface *screen = NULL;
@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
   term = new Terminal(W, H);
 
   if (argc < 2) { builtin_sh_run(); }
-  else { extern_app_run(argv[1]); }
+  else {  extern_app_run(argv[1]); }
 
   // should not reach here
   assert(0);

@@ -2,7 +2,12 @@
 #include <fs.h>
 #include <common.h>
 #include "syscall.h"
+#include <memory.h>
+#include <proc.h>
 
+extern uint32_t signindex;
+void switch_boot_pcb();
+void context_uload(PCB*p,const char*filename,char *const argv[], char *const envp[]);
 
 void sys_exit(){
  halt(0);
@@ -39,7 +44,19 @@ int sys_gettimeofday(struct timeval *timer){
 	timer->tv_usec=io_read(AM_TIMER_UPTIME).us%1000000;
 return 0;
 }
-
+int sys_execve(const char *filename, char *const argv[], char *const envp[]){
+	PCB*p=(PCB*)new_page(8);
+	p->cp=NULL;
+	signindex--;
+	context_uload(p,filename,argv,envp);
+	if(p->cp==NULL)//fail to load
+	{
+	signindex++;
+	}else{
+	switch_boot_pcb();
+	yield();}
+	return 1;
+}
 void do_syscall(Context *c) {
   uintptr_t a[4];
   a[0] = c->GPR1;
@@ -77,6 +94,9 @@ void do_syscall(Context *c) {
 	break;
     case SYS_gettimeofday:
 	c->GPRx=sys_gettimeofday((struct timeval*)a[1]);
+	break;
+    case SYS_execve:
+	c->GPRx=sys_execve((const char*)a[1],(char**const)a[2],(char**const)a[3]);
 	break;
     default: panic("Unhandled syscall ID = %d\n", a[0]);
   }

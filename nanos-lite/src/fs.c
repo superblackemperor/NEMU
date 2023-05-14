@@ -49,12 +49,14 @@ void init_fs() {
 }
 
 int fs_open(const char *pathname, int flags, int mode){
-	for(int i=3;i<sizeof(file_table);i++){
-	  if(strcmp(file_table[i].name,pathname)==0){
+//	printf("filelen%d\n",ARRLEN(file_table));
+	for(int i=3;i<ARRLEN(file_table);i++){
+		if(strcmp(file_table[i].name,pathname)==0){
 		return i;
 	  }
 	}
-	panic("filename error");
+	return -1;
+	//panic("filename error");
 }
 size_t fs_read(int fd, void *buf, size_t len){
 	if(FT.open_offset+len>=FT.size){

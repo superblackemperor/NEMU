@@ -1,6 +1,7 @@
 #ifndef KLIB_MACROS_H__
 #define KLIB_MACROS_H__
 
+#define ARRLEN(name) (sizeof(name)/sizeof(name[0]))
 #define ROUNDUP(a, sz)      ((((uintptr_t)a) + (sz) - 1) & ~((sz) - 1))
 #define ROUNDDOWN(a, sz)    ((((uintptr_t)a)) & ~((sz) - 1))
 #define LENGTH(arr)         (sizeof(arr) / sizeof((arr)[0]))
