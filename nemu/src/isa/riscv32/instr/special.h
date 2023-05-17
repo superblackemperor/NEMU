@@ -19,6 +19,8 @@ def_EHelper(nemu_trap) {
 		csr=&cpu.mcause;break;\
 		case 0x341:\
 		csr=&cpu.mepc;break;\
+		case 0x180:\
+		csr=&cpu.satp;break;\
 		default:assert(0);\
 		break;\
 };

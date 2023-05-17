@@ -52,10 +52,11 @@ int sys_execve(const char *filename, char *const argv[], char *const envp[]){
 	if(p->cp==NULL)//fail to load
 	{
 	signindex++;
+	return -2;
 	}else{
 	switch_boot_pcb();
-	yield();}
-	return 1;
+	yield();
+	return 1;}
 }
 void do_syscall(Context *c) {
   uintptr_t a[4];

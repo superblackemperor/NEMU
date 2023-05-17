@@ -49,10 +49,7 @@ static void sh_handle_cmd(const char *cmd) {
 	argvv[i]=argv[i];
 	}
 	char*envp[]={NULL};
-	printf("argvv[0]:%s\n",argvv[0]);
 	int ret=execve(argvv[0],argvv,envp);
-	printf("ret:%d\n",ret);
-	//execve("/bin/bird",argvv,envp);
 	}
 
 void builtin_sh_run() {

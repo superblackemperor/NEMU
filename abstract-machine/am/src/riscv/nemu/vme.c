@@ -2,6 +2,7 @@
 #include <nemu.h>
 #include <klib.h>
 
+
 static AddrSpace kas = {};
 static void* (*pgalloc_usr)(int) = NULL;
 static void (*pgfree_usr)(void*) = NULL;
@@ -31,14 +32,14 @@ bool vme_init(void* (*pgalloc_f)(int), void (*pgfree_f)(void*)) {
   kas.ptr = pgalloc_f(PGSIZE);
 
   int i;
-  for (i = 0; i < LENGTH(segments); i ++) {
+  for (i = 0; i < LENGTH(segments); i ++) {//将内核空间恒等映射完，再开启pgtbwalk
     void *va = segments[i].start;
     for (; va < segments[i].end; va += PGSIZE) {
       map(&kas, va, va, 0);
     }
   }
 
-  set_satp(kas.ptr);
+  set_satp(kas.ptr);//<<--
   vme_enable = 1;
 
   return true;
@@ -50,7 +51,7 @@ void protect(AddrSpace *as) {
   as->area = USER_SPACE;
   as->pgsize = PGSIZE;
   // map kernel space
-  memcpy(updir, kas.ptr, PGSIZE);
+  //memcpy(updir, kas.ptr, PGSIZE);
 }
 
 void unprotect(AddrSpace *as) {
@@ -65,8 +66,20 @@ void __am_switch(Context *c) {
     set_satp(c->pdir);
   }
 }
-
+#define ASP1(name,va) name[VPN1(va)]
+#define ASP2(name,va) name[VPN1(va)][VPN2(va)]
+#define VPN1(va) ((uint32_t)va>>22)
+#define VPN2(va) (((uint32_t)va>>12) & 0x3ff)
 void map(AddrSpace *as, void *va, void *pa, int prot) {
+	uint32_t**tmp=(uint32_t**)(as->ptr);
+	if(tmp[VPN1(va)]==NULL){//页目录
+		tmp[VPN1(va)]=pgalloc_usr(1);//申请一级页表项		
+	}
+	uint32_t pte=ASP2(tmp,va);
+	if((pte&0x80000000)==0){//页表项
+		ASP2(tmp,va)= 0x80000000 | ((uint32_t)pa>>12);
+	}
+	
 }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {

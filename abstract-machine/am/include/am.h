@@ -47,7 +47,7 @@ typedef struct {
 typedef struct {
   int pgsize;
   Area area;
-  void *ptr;
+  void *ptr;//page table 
 } AddrSpace;
 
 #ifdef __cplusplus
