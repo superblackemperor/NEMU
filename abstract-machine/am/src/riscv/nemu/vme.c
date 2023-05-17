@@ -51,7 +51,7 @@ void protect(AddrSpace *as) {
   as->area = USER_SPACE;
   as->pgsize = PGSIZE;
   // map kernel space
-  //memcpy(updir, kas.ptr, PGSIZE);
+  memcpy(updir, kas.ptr, PGSIZE);
 }
 
 void unprotect(AddrSpace *as) {
@@ -64,6 +64,11 @@ void __am_get_cur_as(Context *c) {
 void __am_switch(Context *c) {
   if (vme_enable && c->pdir != NULL) {
     set_satp(c->pdir);
+  }
+}
+void __am_switch_as(AddrSpace *as) {
+  if (vme_enable && as->ptr != NULL) {
+    set_satp(as->ptr);
   }
 }
 #define ASP1(name,va) name[VPN1(va)]
@@ -83,7 +88,14 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
 }
 
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
-  	Context init={{0},0,0x1800,(uint32_t)(entry-4)};
-	memcpy(kstack.end-sizeof(Context),&init,sizeof(Context));
+	int len=kstack.end-kstack.start;
+  	void*pstack=pgalloc_usr(len);
+	int pgnum=len/PGSIZE;
+	if(len%PGSIZE!=0)pgnum++;
+	void*va=kstack.start;
+	for(int i=0;i<pgnum;i++)
+	map(as,va+i*PGSIZE,pstack+i*PGSIZE,0);
+	Context init={{0},0,0x1800,(uint32_t)(entry-4),NULL};
+	memcpy(pstack+len-sizeof(Context),&init,sizeof(Context));
 	return kstack.end-sizeof(Context);
 }
