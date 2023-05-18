@@ -82,8 +82,8 @@ void context_uload(PCB*p,const char*filename,char *const argv[], char *const env
 void init_proc() {
 	char*arg1="ARG1";
   context_kload(&pcb[signindex], hello_fun, arg1);//构造好pcd了
-	char*argv[]={"/bin/fix-test",NULL};char*envp[]={"ef","gh",NULL};
-  context_uload(&pcb[signindex], "/bin/fix-test",argv,envp);
+	char*argv[]={"/bin/event-test",NULL};char*envp[]={"ef","gh",NULL};
+  context_uload(&pcb[signindex], "/bin/nterm",argv,envp);
 	
    switch_boot_pcb();//初始化cur
    yield();//自陷操作进入进程调度

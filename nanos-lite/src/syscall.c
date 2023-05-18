@@ -22,6 +22,9 @@ int32_t sys_write(uint32_t fd,void*buf,size_t len){
 	return fs_write(fd,buf,len);
 }
 int32_t sys_brk(uint32_t addr){
+	if(addr>current->max_brk){
+	mm_brk(addr);
+	}
 	return 0;
 }
 size_t sys_read(int fd, void *buf, size_t len){

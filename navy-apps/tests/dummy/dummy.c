@@ -8,5 +8,7 @@
 extern int _syscall_(int, uintptr_t, uintptr_t, uintptr_t);
 
 int main() {
-  return _syscall_(SYS_yield, 0, 0, 0);
-}
+  for(int i=0;i<20;i++)
+	 _syscall_(SYS_yield, 0, 0, 0);
+	return 0;
+}	

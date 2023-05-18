@@ -39,9 +39,10 @@ int pgnum=ph.p_memsz/PGSIZE;
 if(ph.p_memsz%PGSIZE!=0)pgnum++;
 void*paddr=new_page(pgnum);
 void*va=(void*)ph.p_vaddr;//逐页映射
+printf("ph.p_memsz%d,pgnum%d,va%d,paddr%d\n",ph.p_memsz,pgnum,va,paddr);
 for(int i=0;i<pgnum;i++)
 map(&pcb->as,va+i*PGSIZE,paddr+i*PGSIZE,0);
-
+paddr+=(uint32_t)va&0xfff;
 uint32_t j;
 for(j=0;j<ph.p_filesz;j+=4){
     uint32_t instr;

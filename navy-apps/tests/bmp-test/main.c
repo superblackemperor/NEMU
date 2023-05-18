@@ -5,7 +5,6 @@
 #include <BMP.h>
 
 int main() {
-  printf("bmp-test\n");
   NDL_Init(0);
   int a=300,b=300;
   NDL_OpenCanvas(&a, &b);

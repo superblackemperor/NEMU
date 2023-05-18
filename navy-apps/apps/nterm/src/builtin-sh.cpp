@@ -24,7 +24,7 @@ static void sh_prompt() {
 
 static void sh_handle_cmd(const char *cmd) {
 	printf("%s\n",cmd);
-	int argc=0;
+/*	int argc=0;
 	char argv[5][30]={0};//max 5 argv
 	int i=0,j=0;
 	const char*p=cmd;
@@ -49,7 +49,7 @@ static void sh_handle_cmd(const char *cmd) {
 	argvv[i]=argv[i];
 	}
 	char*envp[]={NULL};
-	int ret=execve(argvv[0],argvv,envp);
+	int ret=execve(argvv[0],argvv,envp);*/
 	}
 
 void builtin_sh_run() {

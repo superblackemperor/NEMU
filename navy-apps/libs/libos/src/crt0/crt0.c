@@ -14,6 +14,6 @@ void call_main(uintptr_t *args) {
   //char *empty[] =  {NULL };
   environ = envp;
   exit(main(argc, argv, envp));
-  free(argv);
+  //free(argv);
   assert(0);
 }

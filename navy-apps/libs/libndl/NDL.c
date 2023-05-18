@@ -109,9 +109,9 @@ int NDL_QueryAudio() {
 }
 
 int NDL_Init(uint32_t flags) {
-  if (getenv("NWM_APP")) {
+  /*if (getenv("NWM_APP")) {
     evtdev = 3;
-  }
+  }*/	printf("test\n");
 //open keybord
 	evfd=open("/dev/events",0,0);
 //解析屏幕大小

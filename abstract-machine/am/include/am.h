@@ -49,7 +49,10 @@ typedef struct {
   Area area;
   void *ptr;//page table 
 } AddrSpace;
-
+#define ASP1(name,va) name[VPN1(va)] 
+#define ASP2(name,va) name[VPN1(va)][VPN2(va)]     
+#define VPN1(va) ((uint32_t)va>>22)
+#define VPN2(va) (((uint32_t)va>>12) & 0x3ff)   
 #ifdef __cplusplus
 extern "C" {
 #endif
