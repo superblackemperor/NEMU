@@ -28,7 +28,7 @@ void context_kload(PCB*p,void (*entry)(void *),void*arg){
 }
 uintptr_t loader(PCB *pcb, const char *filename);
 void context_uload(PCB*p,const char*filename,char *const argv[], char *const envp[]){
-	uint32_t argvlen=0,envplen=0;
+/*	uint32_t argvlen=0,envplen=0;
 	char*strptr=NULL,**sstk=NULL;
 //---------------sring area
 
@@ -65,7 +65,7 @@ void context_uload(PCB*p,const char*filename,char *const argv[], char *const env
 	}
 	sstk--;//argc
 	uint32_t*a=(uint32_t*)sstk;
-	*a=argvlen;
+	*a=argvlen;*/
 //-----------------------loader area
 
 	 // load program here
@@ -77,14 +77,17 @@ void context_uload(PCB*p,const char*filename,char *const argv[], char *const env
 	if(entry==NULL)return;
 	Area kstack={p->as.area.end-8*PGSIZE,p->as.area.end};
 	p->cp=ucontext(&p->as,kstack,entry);
+	p->max_brk=0;
+	signindex++;
 }
 //#define UPCBptr (heap.end-sizeof(PCB))
 void init_proc() {
 	char*arg1="ARG1";
   context_kload(&pcb[signindex], hello_fun, arg1);//构造好pcd了
 	char*argv[]={"/bin/event-test",NULL};char*envp[]={"ef","gh",NULL};
-  context_uload(&pcb[signindex], "/bin/nterm",argv,envp);
-	
+  context_uload(&pcb[signindex], "/bin/menu",argv,envp);
+	context_uload(&pcb[signindex], "/bin/hello",argv,envp);
+   context_uload(&pcb[signindex], "/bin/hello",argv,envp);
    switch_boot_pcb();//初始化cur
    yield();//自陷操作进入进程调度
 }
@@ -92,9 +95,17 @@ void __am_switch_as(AddrSpace *as);
 Context* schedule(Context *prev) {
   // save the context pointer
 current->cp = prev;//第一次会让pcb_boot指向内核的上下文
-
-// always select pcb[0] as the new process
-current = (current == &pcb[0] ?  &pcb[1]: &pcb[0]);
+//current = (current == &pcb[0] ?  &pcb[1]: &pcb[0]);
+static int flag=3;
+if(current==&pcb[0]){
+if(flag==3)
+{current=&pcb[1];flag=1;}
+else if(flag==2)
+{current=&pcb[3];flag=3;}
+else
+{current=&pcb[2];flag=2;}
+}
+else current=&pcb[0];
 __am_switch_as(&current->as);
 // then return the new context
 return current->cp;

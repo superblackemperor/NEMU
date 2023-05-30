@@ -19,6 +19,7 @@ paddr_t isa_mmu_translate(vaddr_t vaddr, int len, int type) {
 	asp=paddr_read(asp,4);//二级页表的地址
 	asp+=VPN2(vaddr)*4;//指向目标页表项
 	asp=paddr_read(asp,4);
+	if((asp&0x80000000)==0)printf("vaddr%x\n",vaddr);
 	assert(asp&0x80000000);//用之前必为1
 	return ((asp&0xfffff)<<12)+(vaddr&0xfff);
 	return MEM_RET_FAIL;

@@ -48,11 +48,13 @@ int sys_gettimeofday(struct timeval *timer){
 return 0;
 }
 int sys_execve(const char *filename, char *const argv[], char *const envp[]){
-	PCB*p=(PCB*)new_page(8);
-	p->cp=NULL;
+//	PCB*p=(PCB*)new_page(8);
+//	p->cp=NULL;
 	signindex--;
-	context_uload(p,filename,argv,envp);
-	if(p->cp==NULL)//fail to load
+	void*pre_asptr=current->as.ptr;
+	context_uload(current,filename,argv,envp);
+//	printf("%d,%d\n",pre,current->as.ptr);
+	if(current->as.ptr==pre_asptr)//fail to load
 	{
 	signindex++;
 	return -2;
