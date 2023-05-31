@@ -47,7 +47,6 @@ int sys_gettimeofday(struct timeval *timer){
 	timer->tv_usec=io_read(AM_TIMER_UPTIME).us%1000000;
 return 0;
 }
-int execve_flag=0;
 int sys_execve(const char *filename, char *const argv[], char *const envp[]){
 //	PCB*p=(PCB*)new_page(8);
 //	p->cp=NULL;
@@ -60,7 +59,6 @@ int sys_execve(const char *filename, char *const argv[], char *const envp[]){
 	signindex++;
 	return -2;
 	}else{
-	execve_flag=1;
 	switch_boot_pcb();
 	yield();
 	return 1;}
