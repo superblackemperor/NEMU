@@ -87,7 +87,7 @@ void init_proc() {
 	char*argv[]={"/bin/event-test",NULL};char*envp[]={"ef","gh",NULL};
   context_uload(&pcb[signindex], "/bin/menu",argv,envp);
 	context_uload(&pcb[signindex], "/bin/hello",argv,envp);
-   context_uload(&pcb[signindex], "/bin/hello",argv,envp);
+   //context_uload(&pcb[signindex], "/bin/hello",argv,envp);
    switch_boot_pcb();//初始化cur
    yield();//自陷操作进入进程调度
 }
@@ -96,16 +96,25 @@ Context* schedule(Context *prev) {
   // save the context pointer
 current->cp = prev;//第一次会让pcb_boot指向内核的上下文
 //current = (current == &pcb[0] ?  &pcb[1]: &pcb[0]);
-static int flag=3;
+/*static int flag=2;
 if(current==&pcb[0]){
-if(flag==3)
+if(flag==2)
 {current=&pcb[1];flag=1;}
-else if(flag==2)
-{current=&pcb[3];flag=3;}
+//else if(flag==2)
+//{current=&pcb[3];flag=3;}
 else
 {current=&pcb[2];flag=2;}
 }
 else current=&pcb[0];
+*/
+extern int execve_flag;
+if(execve_flag==1)
+{current=&pcb[0];execve_flag=0;}
+else if(current==&pcb[1])
+	{current=&pcb[0];printf("pcb[0]\n");}
+//else if(current==&pcb[1])
+//	{current=&pcb[2];printf("pcb[2]\n");}
+else {current=&pcb[1];printf("pcb[1]\n");}
 __am_switch_as(&current->as);
 // then return the new context
 return current->cp;
