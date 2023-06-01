@@ -95,7 +95,7 @@ Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
 	void*va=kstack.start;
 	for(int i=0;i<pgnum;i++)
 	map(as,va+i*PGSIZE,pstack+i*PGSIZE,0);
-	Context init={{0},0,0x1800,(uint32_t)(entry-4),NULL};
+	Context init={{0},0,0x1880,(uint32_t)(entry-4),NULL};
 	memcpy(pstack+len-sizeof(Context),&init,sizeof(Context));
 	return kstack.end-sizeof(Context);
 }

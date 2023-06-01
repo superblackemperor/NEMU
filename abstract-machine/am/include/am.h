@@ -18,8 +18,9 @@
 # define EXPECT_TYPE EM_X86_64
 #elif defined(__ISA_RISCV32__) || defined(__ISA_RISCV64__)
 #define EXPECT_TYPE EM_RISCV
-#else 
-#define  EXPECT_TYPE EM_X86_64
+#else
+#define EXPECT_TYPE EM_RISCV
+//#define  EXPECT_TYPE EM_X86_64
 //# error Unsupported ISA
 #endif
 

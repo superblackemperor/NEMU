@@ -3,8 +3,10 @@ void do_syscall(Context *c);
 Context* schedule(Context *prev);
 static Context* do_event(Event e, Context* c) {
   switch (e.event) {
+	case EVENT_IRQ_TIMER:
+	Log(" EVENT_IRQ_TIMER");//时钟中断
 	case EVENT_YIELD:
-	//printf("EVENT_YIELD\n");//进程调度
+	Log("EVENT_YIELD");//进程调度
 	return schedule(c);
 	break;
 	case EVENT_SYSCALL:

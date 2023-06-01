@@ -15,10 +15,10 @@ void switch_boot_pcb() {
 void hello_fun(void *arg) {
   int j = 1;
   while (1) {
-   Log("Hello World from Nanos-lite with arg '%s' for the %dth time!", ((char*)arg), j);
+ // Log("Hello World from Nanos-lite with arg '%s' for the %dth time!", ((char*)arg), j);
  //   Log("hello world\n");
 	j ++;
-    yield();
+   // yield();
   }
 }
 void context_kload(PCB*p,void (*entry)(void *),void*arg){
@@ -102,8 +102,8 @@ if(flag==2)
 {current=&pcb[1];flag=1;}
 //else if(flag==2)
 //{current=&pcb[3];flag=3;}
-else
-{current=&pcb[2];flag=2;}
+//else
+else{current=&pcb[2];flag=2;}
 }
 else current=&pcb[0];
 

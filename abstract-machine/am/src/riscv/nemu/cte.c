@@ -2,6 +2,8 @@
 #include <riscv/riscv.h>
 #include <klib.h>
 
+#define IRQ_TIMER 0x80000007  // for riscv32
+
 static Context* (*user_handler)(Event, Context*) = NULL;
 void __am_get_cur_as(Context *c);
 void __am_switch(Context *c);
@@ -12,7 +14,18 @@ __am_get_cur_as(c);
     /*switch (c->mcause) {
       default: ev.event = EVENT_ERROR; break;
     }*/
-	ev.event=c->mcause;
+	//ev.event=c->mcause;
+	int NO;
+	if(c->mcause>=0&&c->mcause<=19)
+	NO=EVENT_SYSCALL;
+	else if(c->mcause==-1)
+	NO=EVENT_YIELD;
+	else if(c->mcause==IRQ_TIMER)
+	NO=EVENT_IRQ_TIMER;
+	else{
+	printf("error NO mcause =%d\n",c->mcause);
+	NO=EVENT_ERROR;}
+	ev.event=NO;
    /*for(int i=0;i<32;i++){
 	printf("%d ",c->gpr[i]);}
 	printf("\nmepc=%d\n",c->mepc);
@@ -38,7 +51,7 @@ bool cte_init(Context*(*handler)(Event, Context*)) {
 }
 
 Context *kcontext(Area kstack, void (*entry)(void *), void *arg) {//构造上下文
-  	Context init={{0},0,0x1800,(uint32_t)(entry-4)};
+  	Context init={{0},0,0x1880,(uint32_t)(entry-4)};
 	init.gpr[10]=(uintptr_t)arg;
 	memcpy(kstack.end-sizeof(Context),&init,sizeof(Context));
 	return kstack.end-sizeof(Context);

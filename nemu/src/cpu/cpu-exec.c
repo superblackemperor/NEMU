@@ -109,7 +109,8 @@ static const void* g_exec_table[TOTAL_INSTR] = {
 static void fetch_decode_exec_updatepc(Decode *s) {
   fetch_decode(s, cpu.pc);
   s->EHelper(s);
-  cpu.pc = s->dnpc;
+  
+ 	 cpu.pc = s->dnpc;
 }
 
 static void statistic() {
@@ -170,9 +171,14 @@ void cpu_exec(uint64_t n) {
   for (;n > 0; n --) {
     fetch_decode_exec_updatepc(&s);
     g_nr_guest_instr ++;
+    	
     trace_and_difftest(&s, cpu.pc);
     if (nemu_state.state != NEMU_RUNNING) break;
     IFDEF(CONFIG_DEVICE, device_update());
+	word_t intr = isa_query_intr();//check中断
+	if (intr != INTR_EMPTY) {
+	cpu.pc = isa_raise_intr(intr, cpu.pc-4);
+	}
   }
 
   uint64_t timer_end = get_time();

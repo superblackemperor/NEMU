@@ -46,7 +46,7 @@ def_EHelper(csrrs){
  rtl_or(s,csr,csr,dsrc1);
 }
 def_EHelper(ecall){
-	int NO;
+	/*int NO;
 	if(a7>=0&&a7<=19)
 	NO=EVENT_SYSCALL;
 	else if(a7==-1)
@@ -54,12 +54,16 @@ def_EHelper(ecall){
 	else{
 	printf("error NO a7=%u\n",a7);
 	NO=EVENT_ERROR;
-	}
-  s->dnpc=isa_raise_intr(NO,cpu.pc);
+	}*/
+  s->dnpc=isa_raise_intr(a7,cpu.pc);
   
 }
 
 def_EHelper(mret){
+//	printf("mstatus:%x\n",cpu.mstatus);
+	cpu.mstatus|=(cpu.mstatus&0x80)>>4;
+	cpu.mstatus|=0x80;
+//	printf("mepc:%x,mstatus:%x\n",cpu.mepc,cpu.mstatus);
 	s->dnpc=cpu.mepc+4;
 }
 

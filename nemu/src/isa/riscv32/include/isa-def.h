@@ -10,11 +10,12 @@ typedef struct {
 
   vaddr_t pc;
 //CSR
-    rtlreg_t mtvec;
-    rtlreg_t mepc;
-	rtlreg_t mstatus;
-	rtlreg_t mcause;
-	rtlreg_t satp;
+    rtlreg_t mtvec;//中断地址
+    rtlreg_t mepc;//mret返回标定
+	rtlreg_t mstatus;//处理器状态
+	rtlreg_t mcause;//事件类型
+	rtlreg_t satp;//页表
+	bool INTR;
 } riscv32_CPU_state;
 
 // decode
