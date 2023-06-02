@@ -18,4 +18,9 @@ typedef union {
 
 extern PCB *current;
 
+extern PCB *bg_pcb;
+extern PCB *Fx_pcb[];
+#define Fx_pcb1 "F1"
+#define Fx_pcb2 "F2"
+#define Fx_pcb3 "F3"
 #endif

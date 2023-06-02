@@ -1,5 +1,5 @@
 #include <common.h>
-
+#include <proc.h>
 #if defined(MULTIPROGRAM) && !defined(TIME_SHARING)
 # define MULTIPROGRAM_YIELD() yield()
 #else
@@ -27,8 +27,15 @@ size_t events_read(void *buf, size_t offset, size_t len) {
 //	yield();//自陷操作进入进程调度
 	AM_INPUT_KEYBRD_T kev=io_read(AM_INPUT_KEYBRD);
 	strcpy(buf,keyname[kev.keycode]);
-	if(kev.keydown)
-	 return len;
+	if(kev.keydown){
+		if(strcmp(keyname[kev.keycode],Fx_pcb1)==0)
+			bg_pcb=Fx_pcb[1];
+		if(strcmp(keyname[kev.keycode],Fx_pcb2)==0)
+			bg_pcb=Fx_pcb[2];	 
+		if(strcmp(keyname[kev.keycode],Fx_pcb3)==0)
+			bg_pcb=Fx_pcb[3];
+		return len;
+	}
   return 0;
 }
 

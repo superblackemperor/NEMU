@@ -7,6 +7,8 @@ void naive_uload(PCB *pcb, const char *filename);
 static PCB pcb[MAX_NR_PROC] __attribute__((used)) = {};
 static PCB pcb_boot = {};
 PCB *current = NULL;
+PCB *bg_pcb=NULL;
+PCB *Fx_pcb[MAX_NR_PROC]={&pcb[0],&pcb[1],&pcb[2],&pcb[3]};
 uint32_t signindex=0;
 void switch_boot_pcb() {
   current = &pcb_boot;
@@ -82,36 +84,33 @@ void context_uload(PCB*p,const char*filename,char *const argv[], char *const env
 }
 //#define UPCBptr (heap.end-sizeof(PCB))
 void init_proc() {
-	char*arg1="ARG1";
-  context_kload(&pcb[signindex], hello_fun, arg1);//构造好pcd了
+//	char*arg1="ARG1";
+//  context_kload(&pcb[signindex], hello_fun, arg1);//构造好pcd了
 	char*argv[]={"/bin/event-test",NULL};char*envp[]={"ef","gh",NULL};
-  context_uload(&pcb[signindex], "/bin/menu",argv,envp);
-	context_uload(&pcb[signindex], "/bin/hello",argv,envp);
-   //context_uload(&pcb[signindex], "/bin/hello",argv,envp);
-   switch_boot_pcb();//初始化cur
+
+ context_uload(&pcb[signindex], "/bin/hello",argv,envp);//pcb[0]
+ context_uload(&pcb[signindex], "/bin/menu",argv,envp);//pcb[1]
+  context_uload(&pcb[signindex], "/bin/bird",argv,envp);//pcb[2]	
+  context_uload(&pcb[signindex], "/bin/nslider",argv,envp);//pcb[3]
+  bg_pcb=&pcb[1]; 
+  switch_boot_pcb();//初始化cur
    yield();//自陷操作进入进程调度
 }
 void __am_switch_as(AddrSpace *as);
 Context* schedule(Context *prev) {
   // save the context pointer
 current->cp = prev;//第一次会让pcb_boot指向内核的上下文
-//current = (current == &pcb[0] ?  &pcb[1]: &pcb[0]);
-/*static int flag=2;
-if(current==&pcb[0]){
-if(flag==2)
-{current=&pcb[1];flag=1;}
-//else if(flag==2)
-//{current=&pcb[3];flag=3;}
-//else
-else{current=&pcb[2];flag=2;}
-}
-else current=&pcb[0];*/
 
-if(current==&pcb[1])
-	{current=&pcb[0];printf("pcb[0]\n");}
-else if(current==&pcb[0])
+/*if(current==&pcb[1])
+	{current=&pcb[3];printf("pcb[3]\n");}
+else if(current==&pcb[3])
 	{current=&pcb[2];printf("pcb[2]\n");}
-else {current=&pcb[1];printf("pcb[1]\n");}
+else {current=&pcb[1];printf("pcb[1]\n");}*/
+if(current==&pcb[0])
+	{current=bg_pcb;printf("bg_pcb\n");}
+else {current=&pcb[0];printf("pcb[0]\n");}
+
+
 __am_switch_as(&current->as);
 // then return the new context
 return current->cp;
