@@ -86,16 +86,19 @@ void map(AddrSpace *as, void *va, void *pa, int prot) {
 	}
 	
 }
-
+#define USER 1
+#define ustack as->area
 Context *ucontext(AddrSpace *as, Area kstack, void *entry) {
-	int len=kstack.end-kstack.start;
-  	void*pstack=pgalloc_usr(len);
+	//int len=ustack.end-ustack.start;//map usr stack
+  	int len=8*PGSIZE;
+	void*pstack=pgalloc_usr(len);
 	int pgnum=len/PGSIZE;
 	if(len%PGSIZE!=0)pgnum++;
-	void*va=kstack.start;
+	void*va=ustack.end-8*PGSIZE;
 	for(int i=0;i<pgnum;i++)
 	map(as,va+i*PGSIZE,pstack+i*PGSIZE,0);
-	Context init={{0},0,0x1880,(uint32_t)(entry-4),NULL};
-	memcpy(pstack+len-sizeof(Context),&init,sizeof(Context));
+	Context init={{0},0,0x1880,(uint32_t)(entry-4),NULL,USER};//make kernel stack
+	init.gpr[2]=(uintptr_t)ustack.end;
+	memcpy(kstack.end-sizeof(Context),&init,sizeof(Context));
 	return kstack.end-sizeof(Context);
 }

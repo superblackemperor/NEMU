@@ -15,7 +15,7 @@ void switch_boot_pcb() {
 void hello_fun(void *arg) {
   int j = 1;
   while (1) {
- // Log("Hello World from Nanos-lite with arg '%s' for the %dth time!", ((char*)arg), j);
+  //Log("Hello World from Nanos-lite with arg '%s' for the %dth time!", ((char*)arg), j);
  //   Log("hello world\n");
 	j ++;
    // yield();
@@ -75,7 +75,7 @@ void context_uload(PCB*p,const char*filename,char *const argv[], char *const env
   //naive_uload(NULL,filename);
  void (*entry)(void *)=(void*)loader(p,filename); 
 	if(entry==NULL)return;
-	Area kstack={p->as.area.end-8*PGSIZE,p->as.area.end};
+	Area kstack={p->stack,p->stack+STACK_SIZE};
 	p->cp=ucontext(&p->as,kstack,entry);
 	p->max_brk=0;
 	signindex++;
@@ -96,7 +96,7 @@ Context* schedule(Context *prev) {
   // save the context pointer
 current->cp = prev;//第一次会让pcb_boot指向内核的上下文
 //current = (current == &pcb[0] ?  &pcb[1]: &pcb[0]);
-static int flag=2;
+/*static int flag=2;
 if(current==&pcb[0]){
 if(flag==2)
 {current=&pcb[1];flag=1;}
@@ -105,13 +105,13 @@ if(flag==2)
 //else
 else{current=&pcb[2];flag=2;}
 }
-else current=&pcb[0];
+else current=&pcb[0];*/
 
-/*if(current!=&pcb[0])
+if(current==&pcb[1])
 	{current=&pcb[0];printf("pcb[0]\n");}
-else if(current==&pcb[1])
+else if(current==&pcb[0])
 	{current=&pcb[2];printf("pcb[2]\n");}
-else {current=&pcb[0];printf("pcb[0]\n");}*/
+else {current=&pcb[1];printf("pcb[1]\n");}
 __am_switch_as(&current->as);
 // then return the new context
 return current->cp;

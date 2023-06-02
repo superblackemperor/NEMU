@@ -21,7 +21,7 @@ f(30) f(31)
 #define PUSH(n) STORE concat(x, n), (n * XLEN)(sp);
 #define POP(n)  LOAD  concat(x, n), (n * XLEN)(sp);
 
-#define CONTEXT_SIZE  ((32 + 3 + 1) * XLEN)
+#define CONTEXT_SIZE  ((32 + 3 + 1+1) * XLEN)
 #define OFFSET_SP     ( 2 * XLEN)
 #define OFFSET_CAUSE  (32 * XLEN)
 #define OFFSET_STATUS (33 * XLEN)
@@ -30,7 +30,11 @@ f(30) f(31)
 .align 3
 .globl __am_asm_trap
 __am_asm_trap:
-  addi sp, sp, -CONTEXT_SIZE
+  csrrw sp, mscratch, sp
+  bnez sp, save_context
+  csrr sp, mscratch
+save_context: 
+  addi sp, sp, -CONTEXT_SIZE 
 
   MAP(REGS, PUSH)
 
@@ -46,18 +50,28 @@ __am_asm_trap:
   li a0, (1 << 17)
   or t1, t1, a0
   csrw mstatus, t1
+  	
+  csrr a0,mscratch//这个指等于刚进入trap的sp  
+  sw a0,8(sp)  
 
-  mv a0, sp
+  mv a0, sp 
   jal __am_irq_handle
   
-  mv sp,a0
-
+  mv sp,a0//kernel stack sp
+  
+  lw a1,144(sp)//c->np
+  beqz a1,np_is_kernel
+  addi a2,sp,CONTEXT_SIZE
+  csrw mscratch,a2
+np_is_kernel:
   LOAD t1, OFFSET_STATUS(sp)
   LOAD t2, OFFSET_EPC(sp)
   csrw mstatus, t1
   csrw mepc, t2
 
   MAP(REGS, POP)
-
-  addi sp, sp, CONTEXT_SIZE
+  
+  //addi sp, sp, CONTEXT_SIZE 
+  lw sp ,8(sp)//c->sp
+  
   mret

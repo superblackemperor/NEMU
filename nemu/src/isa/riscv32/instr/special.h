@@ -21,6 +21,8 @@ def_EHelper(nemu_trap) {
 		csr=&cpu.mepc;break;\
 		case 0x180:\
 		csr=&cpu.satp;break;\
+		case 0x340:\
+		csr=&cpu.mscratch;break;\
 		default:assert(0);\
 		break;\
 };
@@ -36,7 +38,11 @@ def_EHelper(csrrw){
 	break;
 };*/
 	CHECK_CSR;
+	rtlreg_t tmp_ddest=*ddest;
 	rtl_li(s,ddest,*csr);
+	if(dsrc1==ddest)
+	rtl_mv(s,csr,&tmp_ddest);
+	else
 	rtl_mv(s,csr,dsrc1);
 	
 }

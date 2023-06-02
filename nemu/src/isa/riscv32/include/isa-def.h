@@ -15,6 +15,7 @@ typedef struct {
 	rtlreg_t mstatus;//处理器状态
 	rtlreg_t mcause;//事件类型
 	rtlreg_t satp;//页表
+	rtlreg_t mscratch;//csr临时寄存器
 	bool INTR;
 } riscv32_CPU_state;
 

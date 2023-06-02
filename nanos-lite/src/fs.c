@@ -98,7 +98,7 @@ size_t fs_lseek(int fd, size_t offset, int whence){
 	}
 	if(!(FT.open_offset>=0&&
 FT.open_offset<FT.size)){
-	printf("open_offset:%d,size:%d\n",FT.open_offset,FT.size);
+	printf("name:%s,open_offset:%d,size:%d\n",FT.name,FT.open_offset,FT.size);
 	assert(0);}
 	return FT.open_offset; 
 }
